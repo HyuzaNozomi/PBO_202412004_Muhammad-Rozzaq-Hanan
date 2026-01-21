@@ -1,0 +1,128 @@
+from abc import ABC, abstractmethod
+
+#ABSTRACTION - Abstract Class Pengguna
+class Pengguna(ABC):
+    """Abstract class untuk pengguna sistem."""
+    
+    def __init__(self, nama):
+        self.nama = nama
+    
+    @abstractmethod
+    def akses(self):
+        """Abstract method untuk hak akses pengguna."""
+        pass
+
+
+#ABSTRACTION - Class Turunan Member
+class Member(Pengguna):
+    """Class turunan dari Pengguna dengan atribut poin."""
+    
+    def __init__(self, nama, poin):
+        super().__init__(nama)
+        self.poin = poin
+    
+    def akses(self):
+        """Implementasi method akses untuk member."""
+        return f"Hak akses Member: {self.nama} dapat mengakses fitur premium dan mendapatkan diskon khusus."
+    
+    # SPECIAL METHODS
+    def __str__(self):
+        """Menampilkan informasi member."""
+        return f"Member: {self.nama} – Poin: {self.poin}"
+    
+    def __add__(self, other):
+        """Menjumlahkan poin dua member."""
+        if isinstance(other, Member):
+            return self.poin + other.poin
+        return NotImplemented
+    
+    def __len__(self):
+        """Mengembalikan panjang nama member."""
+        return len(self.nama)
+
+
+# 4. CUSTOM EXCEPTION
+class PoinTidakValidError(Exception):
+    """Custom exception untuk poin yang tidak valid."""
+    pass
+
+
+# EXCEPTION HANDLING - Program utama
+def main():
+    """Program utama untuk input dan proses member."""
+    
+    print("="*60)
+    print("PROGRAM SISTEM MEMBER DENGAN ABSTRACTION")
+    print("="*60 + "\n")
+    
+    # Input poin dari user
+    poin_list = []
+    
+    for i in range(2):
+        while True:
+            try:
+                print(f"Masukkan data Member {i+1}:")
+                nama = input(f"Nama Member {i+1}: ").strip()
+                
+                # Validasi nama kosong
+                if nama == "":
+                    print("Error: Nama tidak boleh kosong. Silakan coba lagi.\n")
+                    continue
+                
+                poin_input = input(f"Poin Member {i+1}: ").strip()
+                
+                # Validasi input kosong
+                if poin_input == "":
+                    raise ValueError("Input poin tidak boleh kosong.")
+                
+                poin = int(poin_input)
+                
+                # Validasi poin positif
+                if poin < 0:
+                    raise PoinTidakValidError("Poin tidak boleh negatif. Masukkan poin yang valid.")
+                
+                # Membuat object Member
+                member = Member(nama, poin)
+                poin_list.append(member)
+                print(f"Member {nama} berhasil ditambahkan.\n")
+                break
+                
+            except ValueError as ve:
+                print(f"Error: Input harus berupa bilangan bulat. Silakan coba lagi.\n")
+            except PoinTidakValidError as pnv:
+                print(f"Error: {pnv}. Silakan coba lagi.\n")
+    
+    # Menampilkan hasil
+    print("\n" + "="*60)
+    print("HASIL DATA MEMBER")
+    print("="*60 + "\n")
+    
+    m1, m2 = poin_list[0], poin_list[1]
+    
+    # Menampilkan informasi member
+    print("1. Info Member (menggunakan __str__):")
+    print(f"   {m1}")
+    print(f"   {m2}\n")
+    
+    # Menampilkan hak akses
+    print("2. Hak Akses Member (method akses()):")
+    print(f"   {m1.akses()}")
+    print(f"   {m2.akses()}\n")
+    
+    # Menjumlahkan poin (menggunakan __add__)
+    print("3. Jumlah Total Poin (menggunakan __add__):")
+    total_poin = m1 + m2
+    print(f"   {m1.nama} + {m2.nama} = {total_poin} poin\n")
+    
+    # Menampilkan panjang nama (menggunakan __len__)
+    print("4. Panjang Nama Member (menggunakan __len__):")
+    print(f"   Panjang nama {m1.nama}: {len(m1)} karakter")
+    print(f"   Panjang nama {m2.nama}: {len(m2)} karakter\n")
+    
+    print("="*60)
+    print("Program selesai.")
+    print("="*60)
+
+
+if __name__ == "__main__":
+    main()
